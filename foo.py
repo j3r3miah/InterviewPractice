@@ -316,29 +316,7 @@ def numberOfPaths(a):
     return memo[0][0]
 
 
-if __name__ == '__main__':
-    # pprint(permutations2('abc'))
-    # pprint(permutations_words(['this', 'that', 'other']))
-    # print(three_sum([0, 0, 0]))
-    # print(three_sum([-1, 0, 1, 2, -1, -4]))
-    # assert(three_sum([-1, 0, 1, 2, -1, -4]) == {{-1, 0, 1}, {-1, -1, 2}})
-    # print(threeSumSmaller([3,1,0,-2], 4))
-    # print(triangleOrNot([7, 10, 7], [2, 3, 4], [2, 7, 4]))
-    # S = 10**4 + 67834
-    # S = 21
-    # print(consecutive_sum(S))
-    # print(consecutive_sum_(S))
-    # import sys
-    # print(jumping_jack(int(sys.argv[1]), int(sys.argv[2])))
-
-    # print(usernameDisparity([
-    #     1000 * ('ababaababaababaababaababaababaababaababa'
-    #             'ababaababaababaababaababaababaababaababa'
-    #             'ababaababaababaababa')
-    # ]))
-
-    # interpolate_mercury(read_input())
-
+def test_numberOfPaths():
     import random
     weight = 92
     A = [
@@ -361,3 +339,115 @@ if __name__ == '__main__':
     #     [1, 1],
     #     [1, 1],
     # ]))
+
+
+def trap(height):
+    if len(height) < 2:
+        return 0
+
+    max_left = [None] * len(height)
+    max_left[0] = 0
+    for i in range(1, len(height)):
+        max_left[i] = max(height[i-1], max_left[i-1])
+
+    max_right = [None] * len(height)
+    max_right[-1] = 0
+    for i in reversed(range(0, len(height)-1)):
+        max_right[i] = max(height[i+1], max_right[i+1])
+
+    volume = 0
+    for i in range(len(height)):
+        depth = min(max_left[i], max_right[i])
+        if depth > height[i]:
+            volume += depth - height[i]
+
+    # print(height)
+    # print(max_left)
+    # print(max_right)
+    # print(volume)
+
+    return volume
+
+
+def letterCasePermutation(S, prefix=''):
+    if len(S) == 0:
+        return [prefix]
+    
+    for i, c in enumerate(S):
+        if c.isalpha():
+            return (
+                letterCasePermutation(S[i+1:], prefix + c.lower()) +
+                letterCasePermutation(S[i+1:], prefix + c.upper())
+            )
+        else:
+            return letterCasePermutation(S[i+1:], prefix + c)
+
+
+from copy import copy
+
+def letterCasePermutation2(S):
+    rv = [[]]
+    for c in S:
+        if c.isalpha():
+            n = len(rv)
+            for i in range(len(rv)):
+                rv.append(copy(rv[i]))
+                rv[i].append(c.lower())
+                rv[n+i].append(c.upper())
+        else:
+            for i in range(len(rv)):
+                rv[i].append(c)
+
+    return [''.join(o) for o in rv]
+
+
+def letterCasePermutation3(S):
+    num_letters = len([c for c in S if c.isalpha()])
+    rv = []
+    for i in range(2**num_letters):
+        word = []
+        for c in S:
+            if c.isalpha():
+                if i & 1 == 1:
+                    word.append(c.upper())
+                else:
+                    word.append(c.lower())
+                i >>= 1
+            else:
+                word.append(c)
+        rv.append(word)
+    return [''.join(o) for o in rv]
+
+
+def power_set(S):
+    rv = []
+    for i in range(2**len(S)):
+        subset = []
+        for o in S:
+            if i & 1 == 1:
+                subset.append(o)
+            i >>= 1
+        rv.append(subset)
+    return rv
+
+
+def power_set2(S):
+    rv = [[]]
+    for o in S:
+        new = []
+        for r in rv:
+            new.append(r + [o])
+        rv.extend(new)
+    return rv
+
+                
+
+if __name__ == '__main__':
+    # assert(trapRainWater([0,1,0,2,1,0,1,3,2,1,2,1]) == 6)
+    # assert(trapRainWater([2,0,2]) == 2)
+    # S = 'jw2h3'
+    # print(letterCasePermutation(S))
+    # print(letterCasePermutation2(S))
+    # print(letterCasePermutation3(S))
+    print(power_set([1, 2, 3]))
+    print(power_set2([1, 2, 3]))
