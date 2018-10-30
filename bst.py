@@ -83,6 +83,27 @@ class BST:
             return _validate(root.left) and _validate(root.right)
         return _validate(self.root)
 
+    def rebalance(self):
+        def _traverse(root, nodes):
+            if root is None:
+                return
+            _traverse(root.left, nodes)
+            nodes.append(root)
+            _traverse(root.right, nodes)
+
+        def _rebalance(nodes, low, high):
+            if low > high:
+                return None
+            mid = (low + high) // 2
+            root = nodes[mid]
+            root.left = _rebalance(nodes, low, mid-1)
+            root.right = _rebalance(nodes, mid+1, high)
+            return root
+
+        nodes = []
+        _traverse(self.root, nodes)
+        self.root = _rebalance(nodes, 0, len(nodes)-1)
+
     def traverse_in_order(self):
         rv = []
         def _traverse(root):
@@ -133,7 +154,6 @@ class BST:
                 _has_path_sum(root.right, value - root.data)
             )
         return _has_path_sum(self.root, value)
-
 
     @property
     def minimum(self):
@@ -243,6 +263,12 @@ class TestBST:
         tree = BST(['g', 'b', 'd', 'h', 't', 'z', 'a'])
         assert(tree.validate())
 
+    def test_rebalance(self):
+        tree = BST(list(range(1, 16)))
+        assert(tree.depth == 15)
+        tree.rebalance()
+        assert(tree.depth == 4)
+
     def test_traverse_in_order(self):
         tree = BST([5, 9, 7, 3, 2])
         assert(tree.traverse_in_order() == [2, 3, 5, 7, 9])
@@ -273,9 +299,9 @@ if __name__ == '__main__':
     from pprint import pprint
 
     tree = BST([5, 2, 8, 1, 3, 7, 9])
-    for i in range(0, 20):
+    for i in range(0, 8):
         tree.insert(randint(0, 100))
-    tree.validate()
+    tree.rebalance()
     print(tree.traverse_in_order())
     pprint(tree.traverse_level_order())
     pprint(tree.traverse_paths())
