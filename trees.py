@@ -1,3 +1,4 @@
+from pprint import pprint
 # from sys import maxint
 
 
@@ -10,7 +11,7 @@ class Node:
         self.data = data
 
     def __repr__(self):
-        return str(self.data)
+        return f'Node<{str(self.data)}>'
 
 
 def insert(A):
@@ -118,6 +119,50 @@ def _LCA(root, n1, n2):
     )
 
 
+def level_order(root):
+    rv = []
+    level = [root]
+    while any(level):
+        rv.append(level)
+        level = []
+        for node in rv[-1]:
+            if node is None:
+                continue
+            level.append(node.left)
+            level.append(node.right)
+    return rv
+
+
+def LCA2(root, n1, n2):
+    def _find_path(root, node, path=None):
+        if path is None:
+            path = [root]
+        if root is None:
+            return None
+        if root == node:
+            return path
+        path.append(root.left)
+        rv = _find_path(root.left, node, path)
+        if rv:
+            return rv
+        path.pop()
+        path.append(root.right)
+        rv = _find_path(root.right, node, path)
+        if not rv:
+            path.pop()
+        return rv
+    p1 = _find_path(root, n1)
+    p2 = _find_path(root, n2)
+    print(p1, p2)
+    shorter = p1
+    if len(p2) < len(p1):
+        shorter = p2
+    for i in range(len(shorter)):
+        if p1[i] != p2[i]:
+            return p1[i-1]
+    return shorter[-1]
+
+
 if __name__ == '__main__':
     # insert([1, 5, 9, 10, 11, 14, 16, 20])
 
@@ -137,4 +182,18 @@ if __name__ == '__main__':
     n1 = a.left.left
     n2 = a.left.right.left
 
-    print(f'LCA of {n1} and {n2} is {LCA(root, n1, n2)}')
+    pprint(level_order(a))
+
+    for o in [
+        (a, a.right.right),
+        (a, a.left),
+        (a.right, a.left),
+        (a.right.right, a.right.left.right.left),
+        (a.right.left.right, a.right.left.right.left),
+        (a.right.left.right.left, a.right.left.right.left),
+    ]:
+        print()
+        n1 = o[0]
+        n2 = o[1]
+        print(f'LCA of {n1} and {n2} is {LCA(root, n1, n2)}')
+        print(f'LCA of {n1} and {n2} is {LCA2(root, n1, n2)}')

@@ -41,7 +41,6 @@ class MinHeap:
 
     def replace(self, data):
         if self.count == 0:
-            self.push(data)
             return None
         # replace min element with last element
         rv = self.A[0]
