@@ -1,11 +1,12 @@
+import pytest
 from pprint import pprint
 from collections import namedtuple
 
 Pair = namedtuple('Pair', ['key', 'value'])
 
 
-class Hash:
-    empty = 'empty'
+class Map:
+    empty = object()
     A = [None] * 8
     size = 0
 
@@ -26,7 +27,10 @@ class Hash:
             self.rehash()
         h = self.hash(key)
         i = h
-        while self.A[i] != None and self.A[i] != self.empty:
+        while (
+            self.A[i] != None and self.A[i] != self.empty and
+            self.A[i][0] != key
+        ):
             # print('Probing...')
             i += 1
             if i == len(self.A):
@@ -94,14 +98,23 @@ class Hash:
         return self.size
 
 
+class TestMap:
+    def test_insert(self):
+        h = Map(4)
+        h.add('1', 'one')
+        assert(h.get('1') == 'one')
+        h.add('1', 'foo')
+        assert(h.get('1') == 'foo')
+
+
 if __name__ == '__main__':
-    h = Hash(4)
+    h = Map(4)
     h.add('foo', 'My name is foo')
     h.add('bar', 'I like to go to bars')
     h.add('baz', 'And baz out all night')
     print(len(h))
     print(list(h.keys()))
-    del h['foo']
+    h.remove('foo')
     print(len(h))
     print(list(h.keys()))
     # print(h.get('bar'))
