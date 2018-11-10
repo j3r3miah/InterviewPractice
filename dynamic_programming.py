@@ -349,5 +349,35 @@ def test_parens():
 
 
 
+def knapsack_subset_sum(aset, total, n, rv, sofar=None):
+    # this is analogous to the menu items problem Airbnb asked me
+    if sofar is None:
+        sofar = []
+
+    if total < 0:
+        return
+
+    if n == 0 and total > 0:
+        return
+
+    if total == 0:
+        rv.append(sofar)
+        return
+
+    o = aset[n-1]
+    knapsack_subset_sum(aset, total - o, n, rv, sofar + [o])
+    knapsack_subset_sum(aset, total, n-1, rv, sofar)
+
+
+def test_knapsack_subset_sum():
+    rv = []
+    aset = [3, 7, 8, 9]
+    knapsack_subset_sum(aset, 22, len(aset), rv)
+    pprint(sorted(rv))
+
+
 if __name__ == '__main__':
-    test_parens()
+    # test_knapsack_subset_sum()
+
+    print(sorted(["(((())))","((()()))","((())())","((()))()","(()(()))","(()()())","(()())()","(())(())","(())()()","()((()))","()(()())","()(())()","()()(())","()()()()"]))
+    print(sorted(["()()(())","()(()())","(())()()","((())())","(()(()))","()((()))","(((())))","((()()))","((()))()","()(())()","()()()()","(()()())","(()())()"]))

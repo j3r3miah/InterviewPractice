@@ -202,6 +202,24 @@ class BST:
             )
         return _equals(self.root, other.root)
 
+    @classmethod
+    def from_preorder(cls, preorder):
+        def make_tree(items):
+            if not items:
+                return None
+            node = Node(items[0])
+            if len(items) > 1:
+                for i, v in enumerate(items):
+                    if v > node.data:
+                        break
+                node.left = make_tree(items[1:i])
+                node.right = make_tree(items[i:])
+            return node
+
+        tree = cls()
+        tree.root = make_tree(preorder)
+        return tree
+
 
 class TestBST:
     def test_insert(self):
@@ -293,15 +311,25 @@ class TestBST:
         assert(BST().has_path_sum(0))
         assert(BST([4]).has_path_sum(4))
 
+    def test_from_preorder(self):
+        tree = BST.from_preorder([10, 5, 1, 7, 40, 50])
+        assert(tree.validate())
+
 
 if __name__ == '__main__':
     from random import randint
     from pprint import pprint
 
-    tree = BST([5, 2, 8, 1, 3, 7, 9])
-    for i in range(0, 8):
-        tree.insert(randint(0, 100))
-    tree.rebalance()
-    print(tree.traverse_in_order())
-    pprint(tree.traverse_level_order())
-    pprint(tree.traverse_paths())
+    # tree = BST([5, 2, 8, 1, 3, 7, 9])
+    # for i in range(0, 8):
+    #     tree.insert(randint(0, 100))
+    # tree.rebalance()
+    # print(tree.traverse_in_order())
+    # pprint(tree.traverse_level_order())
+    # pprint(tree.traverse_paths())
+
+    tree = BST.from_preorder([10, 5, 1, 7, 40, 50])
+    # pprint(tree.traverse_level_order())
+
+    for o in tree.gen_inorder():
+        print(o)

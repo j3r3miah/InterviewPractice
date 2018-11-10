@@ -440,6 +440,31 @@ def power_set2(S):
         rv.extend(new)
     return rv
 
+
+def restoreIpAddresses(s):
+    rv = set()
+    _restoreIpAddresses(s, None, rv)
+    return list(rv)
+
+def _restoreIpAddresses(s, ip, rv):
+    if len(s) > 12:
+        return
+
+    if ip is None:
+        ip = []
+
+    if len(ip) > 4:
+        return
+
+    if len(s) == 0:
+        if len(ip) == 4:
+            rv.add('.'.join(ip))
+        return
+
+    for i in range(1, 4):
+        o = s[0:i]
+        if int(o) <= 255 and (o[0] != '0' or len(o) == 1):
+            _restoreIpAddresses(s[i:], ip + [o], rv)
                 
 
 if __name__ == '__main__':
@@ -449,5 +474,7 @@ if __name__ == '__main__':
     # print(letterCasePermutation(S))
     # print(letterCasePermutation2(S))
     # print(letterCasePermutation3(S))
-    print(power_set([1, 2, 3]))
-    print(power_set2([1, 2, 3]))
+    # print(power_set([1, 2, 3]))
+    # print(power_set2([1, 2, 3]))
+    # print(restoreIpAddresses("25525511135"))
+    print(restoreIpAddresses("0000"))
